@@ -1,0 +1,7 @@
+{
+  "name": "TypeScript",
+  "version": "0.0.0",
+  "dependencies": {
+    "gulp-typescript": "^2.4.1"
+  }
+}
