@@ -2,6 +2,8 @@
   "name": "TypeScript",
   "version": "0.0.0",
   "dependencies": {
-    "gulp-typescript": "^2.4.1"
+    "gulp-typescript": "^2.4.1",
+    "gulp": "~3.8.10",
+    "del": "~1.1.1"
   }
 }

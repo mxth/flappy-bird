@@ -1,20 +1,39 @@
 var gulp = require('gulp');
 var ts = require('gulp-typescript');
-var eventStream = require('event-stream');
+var del = require('del');
 
-gulp.task('default', function() {
-  // place code for your default task here
+var paths = {
+  ts: [
+    'app/**/*.ts',
+    '_definitions/**/**.d.ts',
+    'bower_components/phaser/typescript/phaser.d.ts',
+    'bower_components/phaser/typescript/pixi.d.ts'
+  ],
+  assets: [
+    'app/**/*',
+    '!app/**/*.ts',
+    'bower_components/**/*'
+  ]
+};
+
+gulp.task('clean', function(cb) {
+  del(['build'], {force: true}, cb);
 });
 
-gulp.task('scripts', function() {
-  var tsResult = gulp.src('*.ts')
-    .pipe(ts({
-      declarationFiles: true,
-      noExternalResolve: true
-    }));
+gulp.task('assets', ['clean'], function() {
+  return gulp.src(paths.assets, {base: '.'})
+    .pipe(gulp.dest('build'));
+});
 
-  return eventStream.merge(
-    tsResult.dts.pipe(gulp.dest('_definitions')),
-    tsResult.js.pipe(gulp.dest('js'))
-  );
+gulp.task('compile', ['assets'], function() {
+  return gulp.src(paths.ts)
+    .pipe(ts({
+      noExternalResolve: true,
+      module: 'amd'
+    }))
+    .js.pipe(gulp.dest('build/app'));
+});
+
+gulp.task('default', ['compile'], function() {
+  gulp.watch(['app/**/*'], ['compile']);
 });

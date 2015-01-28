@@ -8,5 +8,9 @@
     "bower_components",
     "test",
     "tests"
-  ]
+  ],
+  "dependencies": {
+    "phaser": "~2.2.2",
+    "requirejs": "~2.1.15"
+  }
 }

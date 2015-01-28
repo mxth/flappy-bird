@@ -1,4 +1,8 @@
 node_modules/
+bower_components/
 
 .idea/
 *.iml
+
+_definitions/
+build/
