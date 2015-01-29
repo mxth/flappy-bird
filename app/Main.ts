@@ -12,6 +12,10 @@ class Main extends Phaser.State {
 
   labelScore: Phaser.Text;
 
+  jumpSound: Phaser.Sound;
+
+  hitSound: Phaser.Sound;
+
   preload() {
 
     // Change the background color of the game
@@ -21,6 +25,10 @@ class Main extends Phaser.State {
     this.game.load.image('bird', 'assets/bird.png');
 
     this.game.load.image('pipe', 'assets/pipe.png');
+
+    this.game.load.audio('jump', 'assets/jump.wav');
+
+    this.game.load.audio('hit', 'assets/hit.wav');
   }
 
   create() {
@@ -33,6 +41,7 @@ class Main extends Phaser.State {
     // Add gravity to the bird to make it fall
     this.game.physics.arcade.enable(this.bird);
     this.bird.body.gravity.y = 1000;
+    this.bird.anchor.setTo(-0.2, 0.5);
 
     // Call the 'jump' function when the spacekey is hit
     var spaceKey = this.game.input.keyboard.addKey(Phaser.Keyboard.SPACEBAR);
@@ -46,6 +55,9 @@ class Main extends Phaser.State {
 
     this.score = 0;
     this.labelScore = this.game.add.text(20, 20, "0", {font: "30px Arial", fill: "#ffffff"});
+
+    this.jumpSound = this.game.add.audio('jump');
+    this.hitSound = this.game.add.audio('hit');
   }
 
   update() {
@@ -53,11 +65,21 @@ class Main extends Phaser.State {
     if (this.bird.inWorld == false)
       this.restartGame();
 
-    this.game.physics.arcade.overlap(this.bird, this.pipes, this.restartGame, null, this);
+    this.game.physics.arcade.overlap(this.bird, this.pipes, this.hitPipe, null, this);
+
+    if (this.bird.angle < 20)
+      this.bird.angle += 1;
   }
 
   jump() {
+    if (this.bird.alive == false)
+      return;
+
     this.bird.body.velocity.y = -350;
+
+    this.game.add.tween(this.bird).to({angle: -20}, 100).start();
+
+    this.jumpSound.play();
   }
 
   restartGame() {
@@ -84,6 +106,20 @@ class Main extends Phaser.State {
         this.addOnePipe(400, i * 60 + 10);
         this.score += 1;
         this.labelScore.text = this.score.toString();
+  }
+
+  hitPipe() {
+    if (this.bird.alive == false)
+      return;
+
+    this.bird.alive = false;
+    this.game.time.events.remove(this.timer);
+
+    this.pipes.forEachAlive((p) => {
+      p.body.velocity.x = 0;
+    }, this)
+
+    this.hitSound.play();
   }
 }
 
