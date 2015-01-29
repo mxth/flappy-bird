@@ -1,6 +1,8 @@
-var gulp = require('gulp');
-var ts = require('gulp-typescript');
-var del = require('del');
+var gulp = require('gulp'),
+  ts = require('gulp-typescript'),
+  del = require('del'),
+  connect = require('gulp-connect');
+
 
 var paths = {
   ts: [
@@ -31,9 +33,17 @@ gulp.task('compile', ['assets'], function() {
       noExternalResolve: true,
       module: 'amd'
     }))
-    .js.pipe(gulp.dest('build/app'));
+    .js.pipe(gulp.dest('build/app'))
+    .pipe(connect.reload());
 });
 
-gulp.task('default', ['compile'], function() {
+gulp.task('connect', function() {
+  connect.server({
+    root: 'build',
+    livereload: true
+  })
+});
+
+gulp.task('default', ['connect', 'compile'], function() {
   gulp.watch(['app/**/*'], ['compile']);
 });
