@@ -1,6 +1,9 @@
 # flappy-bird
 A Phaser and TypeScript experiment
 
+# Demo
+<a href="http://mxth.github.io/flappy-bird">http://mxth.github.io/flappy-bird</a>
+
 # Build
 ```bash
 npm install
